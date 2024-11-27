@@ -1,0 +1,22 @@
+{
+    "Input": {
+        "CHARGES": "dbfs:/FileStore/Charges_use.csv",
+        "DAMAGES": "dbfs:/FileStore/Damages_use.csv",
+        "ENDORSE": "dbfs:/FileStore/Endorse_use.csv",
+        "PRIMARY PERSON": "dbfs:/FileStore/Primary_Person_use.csv",
+        "RESTRICT": "dbfs:/FileStore/Restrict_use.csv",
+        "UNITS": "dbfs:/FileStore/Units_use.csv"
+    },
+    "Output": {
+        "Analysis_1": "dbfs:/FileStore/Analysis_1.csv",
+        "Analysis_10": "dbfs:/FileStore/Analysis_10.csv",
+        "Analysis_2": "dbfs:/FileStore/Analysis_2.csv",
+        "Analysis_3": "dbfs:/FileStore/Analysis_3.csv",
+        "Analysis_4": "dbfs:/FileStore/Analysis_4.csv",
+        "Analysis_5": "dbfs:/FileStore/Analysis_5.csv",
+        "Analysis_6": "dbfs:/FileStore/Analysis_6.csv",
+        "Analysis_7": "dbfs:/FileStore/Analysis_7.csv",
+        "Analysis_8": "dbfs:/FileStore/Analysis_8.csv",
+        "Analysis_9": "dbfs:/FileStore/Analysis_9.csv"
+    }
+}
