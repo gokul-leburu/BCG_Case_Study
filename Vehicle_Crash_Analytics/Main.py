@@ -137,7 +137,7 @@ try:
         if((log_process.log_table.filter("batch_id ="+str(batch_id)+" and parent_process='"+V_PARENT_PROCESS+"' and process='"+V_PROCESS+"' and status='completed'").count()) == 0):
             print("Process:",V_PROCESS,"has started")
             log_process.log_status(V_STAGE, V_PARENT_PROCESS, V_PROCESS, batch_id, "started")
-            Analysis.functions[V_PROCESS](log_process,batch_id,V_PARENT_PROCESS,V_STAGE,V_PROCESS)
+            Analysis.functions[V_PROCESS](V_PROCESS)
             log_process.log_status(V_STAGE, V_PARENT_PROCESS, V_PROCESS, batch_id, "completed")
             print("Process:",V_PROCESS,"has completed")
         else:
