@@ -64,7 +64,7 @@ class Analysis:
         self.df_Endorse = udf_csv.get_csv("Endorse").alias("end")
         self.df_Restrict = udf_csv.get_csv("Restrict").alias("rstr")
 
-    def Analysis_1(self,log_process,batch_id,V_PARENT_PROCESS,V_STAGE,V_PROCESS):
+    def Analysis_1(self,V_PROCESS):
         df_analysis_1 = self.df_Primary_Person.filter("pp.PRSN_GNDR_ID == 'MALE' and pp.PRSN_INJRY_SEV_ID='KILLED'")\
                                               .groupBy("CRASH_ID")\
                                               .agg(count("*").alias("No_of_male_killed"))\
@@ -74,14 +74,14 @@ class Analysis:
         dbutils.fs.rm(self.output_config[V_PROCESS],True)
         df_analysis_1.write.format("csv").save(self.output_config[V_PROCESS])
 
-    def Analysis_2(self,log_process,batch_id,V_PARENT_PROCESS,V_STAGE,V_PROCESS):
+    def Analysis_2(self,V_PROCESS):
         df_analysis_2 = self.df_Units.filter("veh_body_styl_id ='MOTORCYCLE'")\
                                      .agg(count("*").alias("Total_No_of_two_wheeler_crash_analysis_1"))\
                                      .select("Total_No_of_two_wheeler_crash_analysis_1")
         dbutils.fs.rm(output_config[V_PROCESS],True)
         df_analysis_2.write.format("csv").save(output_config[V_PROCESS])
 
-    def Analysis_3(self,log_process,batch_id,V_PARENT_PROCESS,V_STAGE,V_PROCESS):
+    def Analysis_3(self,V_PROCESS):
         df_analysis_3 = self.df_Units.join(self.df_Primary_Person,(self.df_Primary_Person["CRASH_ID"]==self.df_Units["CRASH_ID"]) & (self.df_Primary_Person["UNIT_NBR"]==self.df_Units["UNIT_NBR"]))\
                         .filter("PRSN_INJRY_SEV_ID = 'KILLED' AND PRSN_AIRBAG_ID = 'NOT DEPLOYED' AND VEH_MAKE_ID!='NA'")\
                         .groupBy("VEH_MAKE_ID")\
@@ -91,14 +91,14 @@ class Analysis:
         dbutils.fs.rm(output_config[V_PROCESS],True)
         df_analysis_3.write.format("csv").save(output_config[V_PROCESS])
 
-    def Analysis_4(self,log_process,batch_id,V_PARENT_PROCESS,V_STAGE,V_PROCESS):
+    def Analysis_4(self,V_PROCESS):
         df_analysis_4 = self.df_Units.join(self.df_Primary_Person,(self.df_Primary_Person["CRASH_ID"]==self.df_Units["CRASH_ID"]) & (self.df_Primary_Person["UNIT_NBR"]==self.df_Units["UNIT_NBR"]))\
                                .filter("VEH_HNR_FL='Y' AND DRVR_LIC_TYPE_ID IN ('COMMERCIAL DRIVER LIC.' , 'DRIVER LICENSE')")\
                                .agg(count("*").alias("count"))
         dbutils.fs.rm(output_config[V_PROCESS],True)
         df_analysis_4.write.format("csv").save(output_config[V_PROCESS])
 
-    def Analysis_5(self,log_process,batch_id,V_PARENT_PROCESS,V_STAGE,V_PROCESS):
+    def Analysis_5(self,V_PROCESS):
         df_analysis_5 = self.df_Primary_Person.filter("PRSN_GNDR_ID !='FEMALE' and DRVR_LIC_STATE_ID not in ('NA','Unknown')")\
                                  .groupBy("DRVR_LIC_STATE_ID")\
                                  .agg(count("*").alias("Total_no_of_accidents"))\
@@ -108,7 +108,7 @@ class Analysis:
         df_analysis_5.write.format("csv").save(output_config[V_PROCESS])
         log_process.log_status(V_STAGE, V_PARENT_PROCESS, V_PROCESS, batch_id, "completed")
 
-    def Analysis_6(self,log_process,batch_id,V_PARENT_PROCESS,V_STAGE,V_PROCESS):
+    def Analysis_6(self,V_PROCESS):
         window_spec = Window.orderBy(desc("Total_no_of_injurys_and_deaths"))
         df_analysis_6= self.df_Units.filter("veh_make_id not in ('NA','UNKNOWN')")\
                        .groupBy("veh_make_id")\
@@ -119,7 +119,7 @@ class Analysis:
         dbutils.fs.rm(output_config[V_PROCESS],True)
         df_analysis_6.write.format("csv").save(output_config[V_PROCESS])
 
-    def Analysis_7(self,log_process,batch_id,V_PARENT_PROCESS,V_STAGE,V_PROCESS):
+    def Analysis_7(self,V_PROCESS):
         window_spec = Window.partitionBy("veh_body_styl_id").orderBy(desc("Total_count"))
         df_analysis_7 = self.df_Units.join(self.df_Primary_Person,(self.df_Primary_Person["CRASH_ID"]==self.df_Units["CRASH_ID"]) & (self.df_Primary_Person["UNIT_NBR"]==self.df_Units["UNIT_NBR"]))\
                         .filter("veh_body_styl_id not in ('NA','UNKNOWN','OTHER  (EXPLAIN IN NARRATIVE)','NOT REPORTED') and PRSN_ETHNICITY_ID not in ('NA','UNKNOWN')")\
@@ -132,7 +132,7 @@ class Analysis:
         dbutils.fs.rm(output_config[V_PROCESS],True)
         df_analysis_7.write.format("csv").save(output_config[V_PROCESS])
 
-    def Analysis_8(self,log_process,batch_id,V_PARENT_PROCESS,V_STAGE,V_PROCESS):
+    def Analysis_8(self,V_PROCESS):
 
         df_analysis_8 = self.df_Units.join(self.df_Primary_Person,(self.df_Primary_Person["CRASH_ID"]==self.df_Units["CRASH_ID"]) & (self.df_Primary_Person["UNIT_NBR"]==self.df_Units["UNIT_NBR"]))\
                         .filter("(CONTRIB_FACTR_1_ID in ('HAD BEEN DRINKING','UNDER INFLUENCE - ALCOHOL') or CONTRIB_FACTR_2_ID in ('UNDER INFLUENCE - ALCOHOL','HAD BEEN DRINKING') or CONTRIB_FACTR_P1_ID in ('HAD BEEN DRINKING','UNDER INFLUENCE - ALCOHOL')) and DRVR_ZIP is not null")\
@@ -143,7 +143,7 @@ class Analysis:
         dbutils.fs.rm(output_config[V_PROCESS],True)
         df_analysis_8.write.format("csv").save(output_config[V_PROCESS])
     
-    def Analysis_9(self,log_process,batch_id,V_PARENT_PROCESS,V_STAGE,V_PROCESS):
+    def Analysis_9(self,V_PROCESS):
 
         df_analysis_9 = self.df_Units.join(self.df_Damages,self.df_Units["CRASH_ID"]==self.df_Damages["CRASH_ID"],"leftanti")\
                         .filter("((VEH_DMAG_SCL_1_ID not in ('INVALID VALUE','NA','NO DAMAGE') and VEH_DMAG_SCL_1_ID>'DAMAGED 4') or (VEH_DMAG_SCL_2_ID not in ('INVALID VALUE','NA','NO DAMAGE') and VEH_DMAG_SCL_2_ID>'DAMAGED 4')) and fin_resp_type_id in ('PROOF OF LIABILITY INSURANCE','LIABILITY INSURANCE POLICY')")\
@@ -154,7 +154,7 @@ class Analysis:
         dbutils.fs.rm(output_config[V_PROCESS],True)
         df_analysis_9.write.format("csv").save(output_config[V_PROCESS])
     
-    def Analysis_10(self,log_process,batch_id,V_PARENT_PROCESS,V_STAGE,V_PROCESS):
+    def Analysis_10(self,V_PROCESS):
 
         df_top_25_states=self.df_Units.groupBy("veh_lic_state_id").agg(count("*").alias("total_count")).orderBy(desc("total_count")).drop("total_count").limit(25)
         df_top_10_colors=self.df_Units.groupBy("veh_color_id").agg(count("*").alias("total_count")).orderBy(desc("total_count")).drop("total_count").limit(10)
